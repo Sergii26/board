@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Board</string>
+
+    <string name="general.empty" />
+    <string name="general.emptyTime">--:--:--</string>
+
+<!--Home screen-->
+    <string name="home.action_add">Add</string>
+    <string name="home.details">Details</string>
+
+<!--Add ticket screen-->
+    <string name="add_ticket.label_title">Title</string>
+    <string name="add_ticket.label_description">Description</string>
+    <string name="add_ticket.label_priority">Priority</string>
+    <string name="add_ticket.button_submit">Submit</string>
 </resources>
