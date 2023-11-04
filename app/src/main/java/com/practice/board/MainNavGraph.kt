@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -19,7 +20,7 @@ import com.practice.board.ui.theme.BoardTheme
 fun MainNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = NavigationDestination.Home.name
+    startDestination: String = NavDest.Home.getComposeRoute()
 ) {
 
     NavHost(
@@ -27,7 +28,7 @@ fun MainNavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(NavigationDestination.Home.name) {
+        composable(NavDest.Home.getComposeRoute()) {
             BoardTheme() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     HomeScreen(navController = navController)
@@ -35,7 +36,7 @@ fun MainNavHost(
             }
         }
 
-        composable(NavigationDestination.AddTicket.name) {
+        composable(NavDest.AddTicket.getComposeRoute()) {
             BoardTheme() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     AddTicketScreen(navController = navController)
@@ -44,20 +45,49 @@ fun MainNavHost(
         }
 
         composable(
-            "${NavigationDestination.Detail.name}/{taskId}",
-            arguments = listOf(navArgument("taskId") { type = NavType.IntType })
+            NavDest.Detail.getComposeRoute(),
+            arguments = listOf(navArgument(NavDest.Detail.TASK_ID_KEY) { type = NavType.IntType })
         ) { navEntry ->
             BoardTheme() {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    DetailScreen(navController = navController, navEntry.arguments?.getInt("taskId") ?: -1)
+                    DetailScreen(
+                        navController = navController,
+                        navEntry.getInt(NavDest.Detail.TASK_ID_KEY)
+                    )
                 }
             }
         }
     }
 }
 
-enum class NavigationDestination {
-    Home,
-    AddTicket,
-    Detail,
+private fun NavBackStackEntry.getInt(key: String): Int {
+    return arguments?.getInt(key) ?: -1
+}
+
+sealed class NavDest(protected val route: String) {
+    object Home : NavDest("home") {
+        fun getNavRoute(): String {
+            return route
+        }
+    }
+    object AddTicket : NavDest("addTicket") {
+        fun getNavRoute(): String {
+            return route
+        }
+    }
+    object Detail : NavDest("details") {
+        const val TASK_ID_KEY = "taskId"
+
+        override fun getComposeRoute(): String {
+            return "$route/{$TASK_ID_KEY}"
+        }
+
+        fun getNavRoute(taskId: Int): String {
+            return "$route/$taskId"
+        }
+    }
+
+    open fun getComposeRoute(): String {
+        return route
+    }
 }

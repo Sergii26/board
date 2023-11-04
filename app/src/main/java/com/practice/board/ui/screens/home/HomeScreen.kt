@@ -40,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.practice.board.NavigationDestination
+import com.practice.board.NavDest
 import com.practice.board.R
 import com.practice.board.domain.model.Priority
 import com.practice.board.ui.model.TaskUi
@@ -96,11 +96,11 @@ private fun ShowActionButtons(actions: List<Action>, navController: NavControlle
     ) {
         items(actions) {
             val destination = when (it) {
-                Action.AddTask -> NavigationDestination.AddTicket
+                Action.AddTask -> NavDest.AddTicket.getNavRoute()
             }
             ShowButton(it.toButton()) {
                 Timber.d("UI - On action clicked, action: $it")
-                navController.navigate(destination.name)
+                navController.navigate(destination)
             }
         }
     }
@@ -118,7 +118,7 @@ private fun ShowTicketList(viewModel: HomeViewModel, navController: NavControlle
     val tickets by remember { viewModel.tasks }
     val onDetailClicked = { task: TaskUi ->
         Timber.d("UI - On details clicked, task: $task")
-        navController.navigate(NavigationDestination.Detail.name + "/${task.uid}")
+        navController.navigate(NavDest.Detail.getNavRoute(task.uid))
     }
 
     LazyColumn {
